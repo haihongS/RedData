@@ -1,0 +1,61 @@
+pragma solidity ^0.4.18;
+
+contract RegData {
+    
+    mapping (uint256 => address) private itemOwner;
+    mapping (uint256 => uint256) private itemPrice;
+    
+    
+    address private owner;
+    mapping (address => bool) private admins;
+    
+    uint256 basePrice = 1e15;
+    
+    // Modifiers
+    modifier onlyOwner() {
+        require(owner == msg.sender);
+        _;
+    }
+    
+    modifier onlyAdmin() {
+        require(admins[msg.sender]);
+        _;
+    }
+    
+    
+    function RegData() public {
+        owner = msg.sender;
+        admins[owner] = true;
+    }
+    
+    function addAdmins(address _addr) public onlyOwner() {
+        admins[_addr] = true;
+    }
+    
+    function addAddress(uint256[] _itemId, address[] _addr, uint256[] _price) public onlyAdmin() {
+        require(_itemId.length == _addr.length);
+        require(_itemId.length == _price.length);
+        
+        for (uint256 i = 0; i < _itemId.length; i++) {
+            itemOwner[_itemId[i]] = _addr[i];
+            itemPrice[_itemId[i]] = _price[i];
+        }
+    }
+    
+    // OnlyRead
+    function isAdmin(address _addr) public view returns(bool _isAdmin) {
+        return admins[_addr];
+    }
+    
+    
+    // Query Interface Function
+    function ownerOf (uint256 _itemId) public view returns (address _owner) {
+        return itemOwner[_itemId];
+    }
+    
+    function priceOf (uint256 _itemId) public view returns (uint256 _price) {
+        return itemPrice[_itemId] * basePrice;
+    }
+    
+    
+}
