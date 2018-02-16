@@ -32,12 +32,11 @@ contract RegData {
         admins[_addr] = true;
     }
     
-    function addAddress(uint256[] _itemId, address[] _addr, uint256[] _price) public onlyAdmin() {
-        require(_itemId.length == _addr.length);
+    function addAddress(uint256[] _itemId, address _addr, uint256[] _price) public onlyAdmin() {
         require(_itemId.length == _price.length);
         
         for (uint256 i = 0; i < _itemId.length; i++) {
-            itemOwner[_itemId[i]] = _addr[i];
+            itemOwner[_itemId[i]] = _addr;
             itemPrice[_itemId[i]] = _price[i];
         }
     }
